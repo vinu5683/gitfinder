@@ -18,6 +18,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        buildConfig = true
+    }
 
     buildTypes {
         release {
@@ -59,4 +62,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
+    implementation ("androidx.paging:paging-runtime-ktx:3.1.1")
+    implementation ("androidx.paging:paging-common-ktx:3.1.1")
 }

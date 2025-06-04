@@ -25,5 +25,6 @@ data class UserItem(
     val login: String,
     @SerializedName("avatar_url")
     val avatar: String,
+    val type: String,
 )
 

@@ -19,12 +19,12 @@ interface GitFinderApiService {
 
     @GET("users/{username}/repos")
     suspend fun getRepositories(
-        @Path("username") username: String
+        @Path("username") userName: String
     ): Response<List<GitPublicRepositoriesModel>>
 
     @GET("users/{username}")
-    suspend fun getUserDetails(
-        @Path("username") username: String
+    suspend fun getUserProfile(
+        @Path("username") userName: String
     ): Response<UserModel>
 
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardSearchResult"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardUseCompatPadding="true"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfileAvatar"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent" />
+
+        <!--  2) Profile Name: bumped to 18sp, Material Body1 style, single line -->
+        <TextView
+            android:id="@+id/tvProfileName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Vinod Kumar"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/imgBookmark"
+            app:layout_constraintStart_toEndOf="@id/ivProfileAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivProfileAvatar" />
+
+        <!--  3) Profile Type: 16sp, Material Body2 style, colored primary  -->
+        <TextView
+            android:id="@+id/tvProfileType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Organization"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@id/tvProfileName"
+            app:layout_constraintTop_toBottomOf="@id/tvProfileName" />
+
+        <!--  4) Bookmark Icon: larger (32dp), tinted on surface  -->
+        <ImageView
+            android:id="@+id/imgBookmark"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription=""
+            android:src="@drawable/baseline_bookmark_add_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorOnSurface" />
+
+        <!--  5) (Optional) Subtitle or extra row – if you want to add more details, you can insert here -->
+        <!--
+        <TextView
+            android:id="@+id/tvProfileBio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Short bio or additional info…"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textColor="@color/grey_600"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="@id/tvProfileName"
+            app:layout_constraintTop_toBottomOf="@id/tvProfileType"
+            app:layout_constraintEnd_toStartOf="@id/imgBookmark" />
+        -->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

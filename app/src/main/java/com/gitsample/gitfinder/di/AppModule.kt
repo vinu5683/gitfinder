@@ -1,13 +1,17 @@
 package com.gitsample.gitfinder.di
 
+import com.gitsample.gitfinder.BuildConfig
 import com.gitsample.gitfinder.data.remote.GitFinderApiService
 import com.gitsample.gitfinder.data.remote.RemoteDataSource
-import com.gitsample.gitfinder.data.repository.Repository
+import com.gitsample.gitfinder.data.repository.GitFinderRepository
+import com.gitsample.gitfinder.data.repository.RepositoryImpl
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -22,8 +26,33 @@ import javax.inject.Singleton
 object AppModule {
 
     @Provides
-    fun provideRetrofit(): Retrofit = Retrofit.Builder()
+    @Singleton
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        val logging = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+        }
+        return logging
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            // Add the logging interceptor (prints to Logcat)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
+    @Provides
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
         .baseUrl("https://api.github.com/")
+        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(Gson()))
         .build()
 
@@ -39,7 +68,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(remoteDataSource: RemoteDataSource): Repository =
-        Repository(remoteDataSource)
+    fun provideRepository(remoteDataSource: RemoteDataSource): GitFinderRepository =
+        RepositoryImpl(remoteDataSource)
 
 }
