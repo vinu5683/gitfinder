@@ -9,7 +9,16 @@
         android:id="@+id/navigation_home"
         android:name="com.gitsample.gitfinder.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_userProfile"
+            app:destination="@id/navigation_userProfile">
+            <argument
+                android:name="loginId"
+                android:defaultValue=""
+                app:argType="string" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -22,4 +31,16 @@
         android:name="com.gitsample.gitfinder.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_userProfile"
+        android:name="com.gitsample.gitfinder.ui.UserProfileFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_user_profile">
+
+        <argument
+            android:name="loginId"
+            app:argType="string" />
+
+    </fragment>
 </navigation>

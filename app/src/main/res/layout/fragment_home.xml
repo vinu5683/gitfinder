@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="10dp"
-    android:paddingBottom="?attr/actionBarSize"
     tools:context=".ui.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -15,50 +14,51 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:liftOnScroll="true">
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorSurface"
-            app:layout_scrollFlags="scroll|enterAlways"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputSearchBar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="Search profiles"
-            app:boxCornerRadiusBottomEnd="24dp"
-            app:boxCornerRadiusBottomStart="24dp"
-            app:boxCornerRadiusTopEnd="24dp"
-            app:boxCornerRadiusTopStart="24dp"
-            app:boxStrokeColor="@color/grey_800"
-            app:boxStrokeWidthFocused="2dp"
-            app:endIconDrawable="@drawable/ic_mic"
-            app:endIconMode="custom"
-            app:endIconTint="@color/grey_800"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:startIconDrawable="@drawable/ic_search"
-            app:startIconTint="@color/grey_800">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchBar"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputSearchBar"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:ellipsize="end"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1"
-                android:paddingStart="40dp"
-                android:paddingEnd="8dp"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Search profiles"
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:boxCornerRadiusBottomStart="24dp"
+                app:boxCornerRadiusTopEnd="24dp"
+                app:boxCornerRadiusTopStart="24dp"
+                app:boxStrokeColor="@color/grey_800"
+                app:boxStrokeWidthFocused="2dp"
+                app:endIconDrawable="@drawable/ic_mic"
+                app:endIconMode="custom"
+                app:endIconTint="@color/grey_800"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:startIconDrawable="@drawable/ic_search"
+                app:startIconTint="@color/grey_800">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSearchBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="8dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -88,24 +88,13 @@
             android:layout_gravity="center" />
     </FrameLayout>
 
-    <FrameLayout
+    <!-- Show the No Data error state -->
+    <ImageView
         android:id="@+id/errorView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="20dp"
-        android:background="@color/white"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputSearchBar">
-
-        <TextView
-            android:id="@+id/tvErrorText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Something Went Wrong"
-            android:textColor="@color/black"
-            android:textSize="24sp" />
-    </FrameLayout>
+        android:layout_gravity="center"
+        android:src="@drawable/no_data_found" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

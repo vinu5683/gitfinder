@@ -10,7 +10,7 @@ import com.gitsample.gitfinder.data.model.UserItem
 import com.gitsample.gitfinder.databinding.ItemLayoutProfileListBinding
 
 
-class SearchProfileAdapter :
+class SearchProfileAdapter(private val onAdapterActionListener: OnAdapterActionListener) :
     PagingDataAdapter<UserItem, SearchProfileAdapter.ProfileViewHolder>(COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileViewHolder {
@@ -26,20 +26,20 @@ class SearchProfileAdapter :
         getItem(position)?.let { holder.bind(it) }
     }
 
-    /** ViewHolder for a single UserItem row */
     inner class ProfileViewHolder(
         private val binding: ItemLayoutProfileListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: UserItem) {
             binding.tvProfileName.text = user.login
             binding.tvProfileType.text = user.type
-
-            // Load avatar with Glide (placeholder if null)
             Glide.with(binding.ivProfileAvatar.context)
                 .load(user.avatar)
                 .circleCrop()
                 .placeholder(com.gitsample.gitfinder.R.drawable.ic_launcher_foreground)
                 .into(binding.ivProfileAvatar)
+            binding.itemParentLayout.setOnClickListener {
+                onAdapterActionListener.onClick(user)
+            }
         }
     }
 

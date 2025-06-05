@@ -6,15 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gitsample.gitfinder.data.model.UserItem
 import com.gitsample.gitfinder.databinding.FragmentHomeBinding
+import com.gitsample.gitfinder.ui.UserProfileFragmentArgs
+import com.gitsample.gitfinder.ui.search.OnAdapterActionListener
 import com.gitsample.gitfinder.ui.search.SearchProfileAdapter
 import com.gitsample.gitfinder.ui.search.UserLoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,12 +27,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), OnAdapterActionListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
+    private val args: UserProfileFragmentArgs by navArgs()
     private lateinit var adapter: SearchProfileAdapter
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +52,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun pagingRecyclerViewLogic() {
-        adapter = SearchProfileAdapter()
+        adapter = SearchProfileAdapter(this)
         binding.rvSearchResult.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSearchResult.adapter = adapter.withLoadStateFooter(
             footer = UserLoadStateAdapter { adapter.retry() }
@@ -115,8 +120,12 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
-        const val TYPE_LOADING_FOOTER = 1
-        const val TYPE_ITEM = 2
         const val PER_PAGE_ITEMS_COUNT = 10
+    }
+
+    override fun onClick(item: UserItem) {
+        val action = HomeFragmentDirections
+            .actionNavigationHomeToNavigationUserProfile(loginId = item.login)
+        findNavController().navigate(action)
     }
 }

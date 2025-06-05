@@ -3,11 +3,9 @@ package com.gitsample.gitfinder.data.remote
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.gitsample.gitfinder.data.model.GitPublicRepositoriesModel
 import com.gitsample.gitfinder.data.model.UserItem
 import com.gitsample.gitfinder.data.model.UserModel
-import com.gitsample.gitfinder.data.model.UserSearchData
 import com.gitsample.gitfinder.ui.search.paging.GitUserPagingSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

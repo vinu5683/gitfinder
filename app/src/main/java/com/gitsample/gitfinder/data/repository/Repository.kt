@@ -5,13 +5,14 @@ import com.gitsample.gitfinder.data.model.GitPublicRepositoriesModel
 import com.gitsample.gitfinder.data.model.UserItem
 import com.gitsample.gitfinder.data.model.UserModel
 import com.gitsample.gitfinder.data.remote.RemoteDataSource
+import com.gitsample.gitfinder.generics.ApiResult
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject
 
 interface GitFinderRepository {
 
-    suspend fun getUserProfile(userName: String): Response<UserModel>
+    suspend fun getUserProfile(userName: String): ApiResult<UserModel>
     suspend fun getPublicRepositories(userName: String): Response<List<GitPublicRepositoriesModel>>
     suspend fun searchForUsers(
         searchQuery: String,
@@ -20,10 +21,16 @@ interface GitFinderRepository {
 
 }
 
-class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) : GitFinderRepository {
+class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) :
+    GitFinderRepository {
 
-    override suspend fun getUserProfile(userName: String): Response<UserModel> {
-        return remoteDataSource.getUserProfile(userName)
+    override suspend fun getUserProfile(userName: String): ApiResult<UserModel> {
+        val data = remoteDataSource.getUserProfile(userName)
+        return if (data.isSuccessful && data.code() == 200 && data.body() != null) {
+            ApiResult.Success(data.body()!!)
+        } else {
+            ApiResult.Error(data.message())
+        }
     }
 
     override suspend fun getPublicRepositories(userName: String): Response<List<GitPublicRepositoriesModel>> {
