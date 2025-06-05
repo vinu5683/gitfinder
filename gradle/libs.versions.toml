@@ -13,12 +13,15 @@ lifecycleLivedataKtx = "2.9.0"
 lifecycleViewmodelKtx = "2.9.0"
 navigationFragmentKtx = "2.9.0"
 navigationUiKtx = "2.9.0"
+pagingRuntimeKtx = "3.3.6"
 retrofit = "2.9.0"
 hilt = "2.48.1"
 glide = "4.16.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

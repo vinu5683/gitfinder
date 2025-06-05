@@ -9,7 +9,8 @@ import com.gitsample.gitfinder.databinding.ItemLayoutProfileListBinding
 
 class SearchProfileViewHolder(private val binding: ItemLayoutProfileListBinding) :
     ViewHolder(binding.root) {
-    fun bind(user: UserItem) {
+    fun bind(user: UserItem?) {
+        user ?: return
         binding.apply {
             tvProfileName.text = user.login
             tvProfileType.text = user.type

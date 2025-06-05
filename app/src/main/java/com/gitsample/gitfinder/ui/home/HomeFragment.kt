@@ -6,15 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.gitsample.gitfinder.databinding.FragmentHomeBinding
-import com.gitsample.gitfinder.generics.ApiResult
-import com.gitsample.gitfinder.ui.search.EndlessScrollListener
 import com.gitsample.gitfinder.ui.search.SearchProfileAdapter
+import com.gitsample.gitfinder.ui.search.UserLoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -22,9 +27,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: SearchProfileAdapter
-    private var isLoading = false
-    private var isLastPage = false
-    private val THRESHOLD = 3
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,103 +41,36 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViews()
-        subscribeToSearchProfile()
         pagingRecyclerViewLogic()
+        subscribeToSearchProfile()
+        callSearchUsers()
     }
 
     private fun pagingRecyclerViewLogic() {
-//        binding.rvSearchResult.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(rv, dx, dy)
-//
-//
-//                val visibleItemCount = layoutManager.childCount
-//                val totalItemCount = layoutManager.itemCount
-//                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-//
-//                if (!isLoading && !isLastPage) {
-//                    if (visibleItemCount + firstVisibleItemPosition + THRESHOLD >= totalItemCount
-//                        && firstVisibleItemPosition >= 0
-//                    ) {
-//                        viewModel.loadNextPage(perPage = 30)
-//                    }
-//                }
-//
-//
-//                viewModel.startNewSearch(searchQuery = "android", perPage = 30)
-//            }
-//        })
-        val layoutManager = LinearLayoutManager(this.context)
-        val scrollListener = EndlessScrollListener(
-            layoutManager = layoutManager,
-            isLastPage = { isLastPage },
-            isLoading = { isLoading }
-        ) {
-            // This block only runs when RecyclerView is IDLE, at bottom, not loading, not last page.
-            viewModel.loadNextPage(perPage = PER_PAGE_ITEMS_COUNT)
-        }
-
-        binding.rvSearchResult.addOnScrollListener(scrollListener)
-
+        adapter = SearchProfileAdapter()
+        binding.rvSearchResult.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvSearchResult.adapter = adapter.withLoadStateFooter(
+            footer = UserLoadStateAdapter { adapter.retry() }
+        )
+        attachLoadingListener(adapter)
     }
 
     private fun subscribeToSearchProfile() {
-        viewModel.searchResultLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                ApiResult.Loading -> {
-                    if (adapter.itemCount == 0) {
-                        showFullScreenLoading(true)
-                    } else {
-                        adapter.showLoadingFooter(true)
-                    }
-                    isLoading = true
-                    binding.errorView.visibility = View.GONE
-                }
-
-                is ApiResult.Error -> {
-                    showFullScreenLoading(false)
-                    adapter.showLoadingFooter(false)
-                    isLoading = false
-                    binding.errorView.visibility = View.VISIBLE
-                    binding.tvErrorText.text = it.errorMessage
-                }
-
-                is ApiResult.Success -> {
-                    showFullScreenLoading(false)
-                    adapter.showLoadingFooter(false)
-                    binding.errorView.visibility = View.GONE
-                    val combinedList = it.data
-                    combinedList?.items?.let {
-                        adapter.submitList(it)
-                        if (it.isEmpty()) {
-                            isLastPage = true
-                        }
-                    }
-                    isLoading = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.searchResultData.collectLatest {
+                    adapter.submitData(lifecycle, it)
                 }
             }
         }
     }
 
-    private fun showFullScreenLoading(show: Boolean) {
-//        binding.progressOverlay.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
     private fun setUpViews() {
-
-        setUpRecyclerView()
-
-        // 2) When user taps the mic icon:
-        binding.textInputSearchBar.setEndIconOnClickListener {
-            viewModel.startNewSearch(binding.etSearchBar.text.toString(), perPage = PER_PAGE_ITEMS_COUNT)
-        }
-
-        // 3) Optional: handle “Search” IME action
         binding.etSearchBar.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = v.text?.toString()?.trim() ?: ""
                 if (query.length >= 3) {
-                    viewModel.startNewSearch(query, perPage = PER_PAGE_ITEMS_COUNT)
+                    viewModel.searchForUsers(query, perPage = PER_PAGE_ITEMS_COUNT)
                 } else {
                     Toast.makeText(
                         this.context,
@@ -150,10 +85,28 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setUpRecyclerView() {
-        adapter = SearchProfileAdapter()
-        binding.rvSearchResult.layoutManager = LinearLayoutManager(this.context)
-        binding.rvSearchResult.adapter = adapter
+    private fun attachLoadingListener(searchProfileAdapter: SearchProfileAdapter) {
+        searchProfileAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.Loading) {
+                binding.progressOverlay.visibility = View.VISIBLE
+            } else {
+                binding.progressOverlay.visibility = View.GONE
+                val errorState = when {
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    errorState.error.printStackTrace()
+                }
+
+            }
+        }
+    }
+
+    private fun callSearchUsers() {
+        viewModel.searchForUsers("android", 10)
     }
 
     override fun onDestroyView() {

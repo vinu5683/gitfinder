@@ -64,6 +64,6 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.glide)
     kapt(libs.glide.compiler)
-    implementation ("androidx.paging:paging-runtime-ktx:3.1.1")
-    implementation ("androidx.paging:paging-common-ktx:3.1.1")
+    implementation (libs.androidx.paging.runtime.ktx)
+    implementation (libs.androidx.paging.common.ktx)
 }

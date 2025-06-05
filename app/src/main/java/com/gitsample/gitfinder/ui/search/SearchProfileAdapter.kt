@@ -2,76 +2,56 @@ package com.gitsample.gitfinder.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.gitsample.gitfinder.data.model.UserItem
-import com.gitsample.gitfinder.databinding.ItemLayoutFooterBinding
 import com.gitsample.gitfinder.databinding.ItemLayoutProfileListBinding
-import com.gitsample.gitfinder.ui.home.HomeFragment.Companion.TYPE_ITEM
-import com.gitsample.gitfinder.ui.home.HomeFragment.Companion.TYPE_LOADING_FOOTER
 
 
-class SearchProfileAdapter() :
-    RecyclerView.Adapter<ViewHolder>() {
-    private val searchResult = mutableListOf<UserItem>()
-    private var showLoadingFooter = false
+class SearchProfileAdapter :
+    PagingDataAdapter<UserItem, SearchProfileAdapter.ProfileViewHolder>(COMPARATOR) {
 
-    fun submitList(newList: List<UserItem>) {
-        searchResult.clear()
-        searchResult.addAll(newList)
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileViewHolder {
+        val binding = ItemLayoutProfileListBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ProfileViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        if (viewType == TYPE_ITEM) {
-            val binding: ItemLayoutProfileListBinding =
-                ItemLayoutProfileListBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            return SearchProfileViewHolder(binding)
-        } else {
-            val binding: ItemLayoutFooterBinding =
-                ItemLayoutFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return LoadingViewHolder(binding)
+    override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
+        getItem(position)?.let { holder.bind(it) }
+    }
+
+    /** ViewHolder for a single UserItem row */
+    inner class ProfileViewHolder(
+        private val binding: ItemLayoutProfileListBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(user: UserItem) {
+            binding.tvProfileName.text = user.login
+            binding.tvProfileType.text = user.type
+
+            // Load avatar with Glide (placeholder if null)
+            Glide.with(binding.ivProfileAvatar.context)
+                .load(user.avatar)
+                .circleCrop()
+                .placeholder(com.gitsample.gitfinder.R.drawable.ic_launcher_foreground)
+                .into(binding.ivProfileAvatar)
         }
-
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        when (holder) {
-            is SearchProfileViewHolder -> {
-                holder.bind(searchResult[position])
+    companion object {
+        private val COMPARATOR = object : DiffUtil.ItemCallback<UserItem>() {
+            override fun areItemsTheSame(oldItem: UserItem, newItem: UserItem): Boolean {
+                return oldItem.login == newItem.login
             }
 
-            is LoadingViewHolder -> {}
+            override fun areContentsTheSame(oldItem: UserItem, newItem: UserItem): Boolean {
+                return oldItem == newItem
+            }
         }
     }
-
-    override fun getItemCount(): Int {
-        return searchResult.size + if (showLoadingFooter) 1 else 0
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (position < searchResult.size) {
-            TYPE_ITEM
-        } else {
-            TYPE_LOADING_FOOTER
-        }
-    }
-
-    fun showLoadingFooter(show: Boolean) {
-        if (show == showLoadingFooter) return // no change
-
-        showLoadingFooter = show
-        if (show) {
-            // Insert a new footer item at “position = dataList.size”
-            notifyItemInserted(itemCount)
-        } else {
-            // Remove the footer item (at the old position)
-            notifyItemRemoved(itemCount)
-        }
-    }
-
 }

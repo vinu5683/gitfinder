@@ -1,9 +1,11 @@
 package com.gitsample.gitfinder.data.repository
 
+import androidx.paging.PagingData
 import com.gitsample.gitfinder.data.model.GitPublicRepositoriesModel
+import com.gitsample.gitfinder.data.model.UserItem
 import com.gitsample.gitfinder.data.model.UserModel
-import com.gitsample.gitfinder.data.model.UserSearchData
 import com.gitsample.gitfinder.data.remote.RemoteDataSource
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -13,14 +15,13 @@ interface GitFinderRepository {
     suspend fun getPublicRepositories(userName: String): Response<List<GitPublicRepositoriesModel>>
     suspend fun searchForUsers(
         searchQuery: String,
-        pageNumber: Int,
         perPage: Int
-    ): Response<UserSearchData>
+    ): Flow<PagingData<UserItem>>
 
 }
 
-class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) :
-    GitFinderRepository {
+class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) : GitFinderRepository {
+
     override suspend fun getUserProfile(userName: String): Response<UserModel> {
         return remoteDataSource.getUserProfile(userName)
     }
@@ -31,10 +32,10 @@ class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDat
 
     override suspend fun searchForUsers(
         searchQuery: String,
-        pageNumber: Int,
         perPage: Int
-    ): Response<UserSearchData> {
-        return remoteDataSource.searchForUsers(searchQuery, pageNumber, perPage)
+    ): Flow<PagingData<UserItem>> {
+
+        return remoteDataSource.searchForUsers(searchQuery, perPage)
     }
 
 }

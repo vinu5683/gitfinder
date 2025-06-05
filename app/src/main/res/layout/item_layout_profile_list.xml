@@ -25,7 +25,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent" />
 
-        <!--  2) Profile Name: bumped to 18sp, Material Body1 style, single line -->
         <TextView
             android:id="@+id/tvProfileName"
             android:layout_width="0dp"
@@ -33,7 +32,7 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Vinod Kumar"
+            android:text="Dummy User"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -42,7 +41,6 @@
             app:layout_constraintStart_toEndOf="@id/ivProfileAvatar"
             app:layout_constraintTop_toTopOf="@id/ivProfileAvatar" />
 
-        <!--  3) Profile Type: 16sp, Material Body2 style, colored primary  -->
         <TextView
             android:id="@+id/tvProfileType"
             android:layout_width="wrap_content"
@@ -55,7 +53,6 @@
             app:layout_constraintStart_toStartOf="@id/tvProfileName"
             app:layout_constraintTop_toBottomOf="@id/tvProfileName" />
 
-        <!--  4) Bookmark Icon: larger (32dp), tinted on surface  -->
         <ImageView
             android:id="@+id/imgBookmark"
             android:layout_width="32dp"
@@ -65,25 +62,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorOnSurface" />
-
-        <!--  5) (Optional) Subtitle or extra row – if you want to add more details, you can insert here -->
-        <!--
-        <TextView
-            android:id="@+id/tvProfileBio"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="Short bio or additional info…"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textColor="@color/grey_600"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintStart_toStartOf="@id/tvProfileName"
-            app:layout_constraintTop_toBottomOf="@id/tvProfileType"
-            app:layout_constraintEnd_toStartOf="@id/imgBookmark" />
-        -->
+            app:tint="@color/gray_0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
