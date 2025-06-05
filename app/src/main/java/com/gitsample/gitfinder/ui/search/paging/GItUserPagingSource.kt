@@ -14,7 +14,6 @@ class GitUserPagingSource(
     private val perPage: Int
 ) : PagingSource<Int, UserItem>() {
 
-    // GitHub pages start at 1
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserItem> {
         val pageNumber = params.key ?: 1
         return try {
@@ -23,7 +22,6 @@ class GitUserPagingSource(
                 val body: UserSearchData? = response.body()
                 val items = body?.items.orEmpty()
 
-                // nextKey = null if no more pages
                 val nextKey = if (items.isEmpty()) {
                     null
                 } else {
@@ -39,15 +37,13 @@ class GitUserPagingSource(
                 LoadResult.Error(HttpException(response))
             }
         } catch (ioEx: IOException) {
-            LoadResult.Error(ioEx)  // network / conversion error
+            LoadResult.Error(ioEx)
         } catch (httpEx: HttpException) {
             LoadResult.Error(httpEx)
         }
     }
 
-    // This helps Paging to know how to “refresh” when invalidated / retry
     override fun getRefreshKey(state: PagingState<Int, UserItem>): Int? {
-        // Find the page closest to the most recently accessed index
         return state.anchorPosition?.let { anchorPos ->
             val anchorPage = state.closestPageToPosition(anchorPos)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)

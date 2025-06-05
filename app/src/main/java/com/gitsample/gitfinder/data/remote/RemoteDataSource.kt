@@ -15,11 +15,12 @@ import retrofit2.Response
 import javax.inject.Inject
 
 
-class RemoteDataSource @Inject constructor(private val apiService: GitFinderApiService,
-                                           private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+class RemoteDataSource @Inject constructor(
+    private val apiService: GitFinderApiService,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    private var gitUserPagingSource:GitUserPagingSource? = null
+    private var gitUserPagingSource: GitUserPagingSource? = null
 
     suspend fun getUserProfile(userName: String): Response<UserModel> =
         apiService.getUserProfile(userName)

@@ -6,19 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
-import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gitsample.gitfinder.data.model.UserItem
+import com.gitsample.gitfinder.data.model.UserModel
 import com.gitsample.gitfinder.databinding.FragmentHomeBinding
-import com.gitsample.gitfinder.ui.UserProfileFragmentArgs
 import com.gitsample.gitfinder.ui.search.OnAdapterActionListener
 import com.gitsample.gitfinder.ui.search.SearchProfileAdapter
 import com.gitsample.gitfinder.ui.search.UserLoadStateAdapter
@@ -30,7 +29,6 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment(), OnAdapterActionListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val args: UserProfileFragmentArgs by navArgs()
     private lateinit var adapter: SearchProfileAdapter
     private val viewModel: HomeViewModel by activityViewModels()
 
@@ -92,7 +90,11 @@ class HomeFragment : Fragment(), OnAdapterActionListener {
 
     private fun attachLoadingListener(searchProfileAdapter: SearchProfileAdapter) {
         searchProfileAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.Loading) {
+            val refreshState = loadState.refresh
+            val isListEmpty = refreshState is LoadState.NotLoading && adapter.itemCount == 0
+            binding.errorView.isVisible = isListEmpty
+            binding.rvSearchResult.isVisible = !isListEmpty
+            if (refreshState is LoadState.Loading) {
                 binding.progressOverlay.visibility = View.VISIBLE
             } else {
                 binding.progressOverlay.visibility = View.GONE

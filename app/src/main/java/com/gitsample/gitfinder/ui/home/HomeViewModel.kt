@@ -33,7 +33,6 @@ class HomeViewModel @Inject constructor(private val repository: GitFinderReposit
     fun searchForUsers(searchQuery: String, perPage: Int) {
         viewModelScope.launch {
             repository.searchForUsers(searchQuery, perPage).cachedIn(viewModelScope).collect {
-                Log.d("TAGTAGTAGTAG", "searchForUsers: ${it}")
                 _searchResultData.send(it)
             }
         }

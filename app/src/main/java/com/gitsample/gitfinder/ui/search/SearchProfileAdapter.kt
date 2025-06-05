@@ -40,6 +40,9 @@ class SearchProfileAdapter(private val onAdapterActionListener: OnAdapterActionL
             binding.itemParentLayout.setOnClickListener {
                 onAdapterActionListener.onClick(user)
             }
+            binding.imgBookmark.setOnClickListener{
+                //onAdapterActionListener.onBookmarkIconClick(user.login)
+            }
         }
     }
 

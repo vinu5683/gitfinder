@@ -41,7 +41,6 @@ class RepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDat
         searchQuery: String,
         perPage: Int
     ): Flow<PagingData<UserItem>> {
-
         return remoteDataSource.searchForUsers(searchQuery, perPage)
     }
 

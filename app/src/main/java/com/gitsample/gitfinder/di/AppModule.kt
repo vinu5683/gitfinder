@@ -44,7 +44,6 @@ object AppModule {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            // Add the logging interceptor (prints to Logcat)
             .addInterceptor(loggingInterceptor)
             .build()
     }
